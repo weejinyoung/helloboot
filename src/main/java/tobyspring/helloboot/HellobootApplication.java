@@ -3,10 +3,8 @@ package tobyspring.helloboot;
 
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,15 +20,21 @@ public class HellobootApplication {
 	public static void main(String[] args) {
 		TomcatServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
 		WebServer webServer = serverFactory.getWebServer(servletContext -> {
+
+			HelloController helloController = new HelloController();
+
 			servletContext.addServlet("FrontController", new HttpServlet() {
 				@Override
 				protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 					// 인증, 보안, 다국어, 공통 기능
 					if (req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())) {
 						String name = req.getParameter("name");
+
+						String ret = helloController.hello(name);
+
 						resp.setStatus(200);
 						resp.setHeader(CONTENT_TYPE, TEXT_PLAIN_VALUE);
-						resp.getWriter().println("Hello " + name);
+						resp.getWriter().println(ret);
 					} else if (req.getRequestURI().equals("/user")) {
 
 					} else {

@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 
 public class HellobootApplication {
@@ -23,6 +22,7 @@ public class HellobootApplication {
 
 		GenericApplicationContext applicationContext = new GenericApplicationContext();
 		applicationContext.registerBean(HelloController.class);
+		applicationContext.registerBean(SimpleHelloService.class);
 		applicationContext.refresh();
 
 		ServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();

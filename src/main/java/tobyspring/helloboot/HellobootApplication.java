@@ -15,6 +15,15 @@ import org.springframework.web.servlet.DispatcherServlet;
 @ComponentScan
 public class HellobootApplication {
 
+	@Bean
+	public ServletWebServerFactory servletWebServerFactory() {
+		return new TomcatServletWebServerFactory();
+	}
+
+	@Bean
+	DispatcherServlet dispatcherServlet() {
+		return new DispatcherServlet();
+	}
 
 	public static void main(String[] args) {
 
@@ -22,10 +31,13 @@ public class HellobootApplication {
 			@Override
 			protected void onRefresh() {
 				super.onRefresh();
-				ServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
+				ServletWebServerFactory serverFactory = this.getBean(ServletWebServerFactory.class);
+				DispatcherServlet dispatcherServlet = this.getBean(DispatcherServlet.class);
+				dispatcherServlet.setApplicationContext(this);
+
 				WebServer webServer = serverFactory.getWebServer(servletContext -> {
-					servletContext.addServlet("DispatcherServlet", new DispatcherServlet(this) {
-					}).addMapping("/*");
+					servletContext.addServlet("DispatcherServlet", dispatcherServlet)
+					.addMapping("/*");
 				});
 				webServer.start();
 			}
